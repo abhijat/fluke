@@ -5,10 +5,9 @@ use crate::api_versions::api_versions_response;
 use crate::parse_utils::read_u32;
 use crate::request_header::RequestHeader;
 
+mod api_versions;
 mod parse_utils;
 mod request_header;
-mod api_versions;
-
 
 fn process_stream(mut stream: TcpStream) {
     eprintln!("connected to = {:?}", stream.peer_addr().unwrap());
@@ -39,8 +38,7 @@ fn process_stream(mut stream: TcpStream) {
 }
 
 fn main() {
-    let listener = TcpListener::bind("localhost:9092")
-        .expect("failed to initialize listener");
+    let listener = TcpListener::bind("localhost:9092").expect("failed to initialize listener");
 
     for stream in listener.incoming() {
         match stream {
