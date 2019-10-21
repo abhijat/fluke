@@ -28,7 +28,7 @@ pub fn parse_array<T>(data: &[u8], entity_parser: fn(&[u8]) -> (&[u8], T)) -> (&
     (data, results)
 }
 
-pub fn parse_size_prefixed_string(data: &[u8]) -> (&[u8], String) {
+pub fn parse_string(data: &[u8]) -> (&[u8], String) {
     let result: IResult<&[u8], u16> = be_u16(data);
     let (data, string_size) = result.expect("Failed to extract string size");
 
@@ -48,7 +48,7 @@ pub fn parse_request_header(data: &[u8]) -> (&[u8], RequestHeader) {
     let (api_key, api_version, correlation_id) = header;
 
     // We need to parse the client-id separately, once we have its size
-    let (data, client_id) = parse_size_prefixed_string(data);
+    let (data, client_id) = parse_string(data);
 
     let request_header = RequestHeader::new(api_key, api_version, correlation_id, client_id);
     (data, request_header)
