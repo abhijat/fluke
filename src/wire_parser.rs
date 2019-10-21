@@ -53,3 +53,9 @@ pub fn parse_request_header(data: &[u8]) -> (&[u8], RequestHeader) {
     let request_header = RequestHeader::new(api_key, api_version, correlation_id, client_id);
     (data, request_header)
 }
+
+pub fn parse_boolean(data: &[u8]) -> (&[u8], bool) {
+    let result: IResult<&[u8], u8> = be_u8(data);
+    let (data, value) = result.expect("Failed to parse boolean");
+    (data, value > 0)
+}
