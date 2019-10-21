@@ -18,3 +18,14 @@ impl RequestHeader {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct ResponseHeader {
+    pub correlation_id: u32,
+}
+
+impl ResponseHeader {
+    pub fn new(correlation_id: u32) -> Self {
+        ResponseHeader { correlation_id }
+    }
+}

@@ -2,14 +2,14 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 
 use crate::api_versions::api_versions_response;
+use crate::headers::RequestHeader;
 use crate::parse_utils::read_u32;
-use crate::request_header::RequestHeader;
 use crate::response::respond_to_request;
-use crate::wire_parser::{parse_request_header, parse_size};
+use crate::wire_parser::{parse_request_header, parse_size, parse_size_prefixed_string, parse_key};
 
 mod api_versions;
 mod parse_utils;
-mod request_header;
+mod headers;
 mod response;
 mod wire_parser;
 
@@ -30,6 +30,13 @@ fn process_stream(mut stream: TcpStream) {
                     let data = &buffer[0..nread];
                     let (data, size) = parse_size(data);
                     let (data, header) = parse_request_header(data);
+
+                    if header.api_key == 10 {
+                        let (data, key) = parse_size_prefixed_string(data);
+                        let (data, key_type) = parse_key(data);
+                        eprintln!("FindCoordinator request for {} [{}]", key, key_type);
+                    }
+
                     let response = respond_to_request(header);
                     stream.write(response.as_slice()).expect("failed to respond!");
                 }
