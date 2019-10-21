@@ -5,7 +5,7 @@ use crate::api_versions::api_versions_response;
 use crate::headers::RequestHeader;
 use crate::parse_utils::read_u32;
 use crate::response::respond_to_request;
-use crate::wire_parser::{parse_array, parse_key, parse_request_header, parse_size, parse_string};
+use crate::wire_parser::{parse_list, parse_key, parse_request_header, parse_size, parse_string};
 
 mod api_versions;
 mod parse_utils;
@@ -32,7 +32,7 @@ fn process_stream(mut stream: TcpStream) {
                     let (data, header) = parse_request_header(data);
 
                     if header.api_key == 3 {
-                        let (data, topics) = parse_array(data, parse_string);
+                        let (data, topics) = parse_list(data, parse_string);
                         eprintln!("topics = {:?}", topics);
                     } else if header.api_key == 10 {
                         let (data, key) = parse_string(data);

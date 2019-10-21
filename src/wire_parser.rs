@@ -15,7 +15,7 @@ pub fn parse_size(data: &[u8]) -> (&[u8], u32) {
     result.expect("Failed to parse size from data")
 }
 
-pub fn parse_array<T>(data: &[u8], entity_parser: fn(&[u8]) -> (&[u8], T)) -> (&[u8], Vec<T>) {
+pub fn parse_list<T>(data: &[u8], entity_parser: fn(&[u8]) -> (&[u8], T)) -> (&[u8], Vec<T>) {
     // first read the size
     let (data, size_of_array) = parse_size(data);
 
