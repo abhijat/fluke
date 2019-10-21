@@ -15,6 +15,19 @@ pub fn parse_size(data: &[u8]) -> (&[u8], u32) {
     result.expect("Failed to parse size from data")
 }
 
+pub fn parse_array<T>(data: &[u8], entity_parser: fn(&[u8]) -> (&[u8], T)) -> (&[u8], Vec<T>) {
+    // first read the size
+    let (data, size_of_array) = parse_size(data);
+
+    let mut results = Vec::<T>::new();
+    for i in 0..size_of_array {
+        let (data, item) = entity_parser(data);
+        results.push(item);
+    }
+
+    (data, results)
+}
+
 pub fn parse_size_prefixed_string(data: &[u8]) -> (&[u8], String) {
     let result: IResult<&[u8], u16> = be_u16(data);
     let (data, string_size) = result.expect("Failed to extract string size");

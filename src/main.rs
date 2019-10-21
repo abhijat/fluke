@@ -5,7 +5,7 @@ use crate::api_versions::api_versions_response;
 use crate::headers::RequestHeader;
 use crate::parse_utils::read_u32;
 use crate::response::respond_to_request;
-use crate::wire_parser::{parse_request_header, parse_size, parse_size_prefixed_string, parse_key};
+use crate::wire_parser::{parse_array, parse_key, parse_request_header, parse_size, parse_size_prefixed_string};
 
 mod api_versions;
 mod parse_utils;
@@ -31,7 +31,10 @@ fn process_stream(mut stream: TcpStream) {
                     let (data, size) = parse_size(data);
                     let (data, header) = parse_request_header(data);
 
-                    if header.api_key == 10 {
+                    if header.api_key == 3 {
+                        let (data, topics) = parse_array(data, parse_size_prefixed_string);
+                        eprintln!("topics = {:?}", topics);
+                    } else if header.api_key == 10 {
                         let (data, key) = parse_size_prefixed_string(data);
                         let (data, key_type) = parse_key(data);
                         eprintln!("FindCoordinator request for {} [{}]", key, key_type);
