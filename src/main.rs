@@ -30,18 +30,6 @@ fn process_stream(mut stream: TcpStream) {
                     let (data, size) = parse_size(data);
                     let (data, header) = parse_request_header(data);
 
-                    if header.api_key == 3 {
-                        let (data, topics) = parse_list(data, parse_string);
-                        let (data, allow_auto_topic_creation) = parse_boolean(data);
-                        let (data, include_cluster_authorized_operations) = parse_boolean(data);
-                        let (data, include_topic_authorized_operations) = parse_boolean(data);
-                        eprintln!("topics = {:?} | flags = {:?}", topics, (allow_auto_topic_creation, include_topic_authorized_operations, include_topic_authorized_operations));
-                    } else if header.api_key == 10 {
-                        let (data, key) = parse_string(data);
-                        let (data, key_type) = parse_key(data);
-                        eprintln!("FindCoordinator request for {} [{}]", key, key_type);
-                    }
-
                     let response = respond_to_request(header, data);
                     stream.write(response.as_slice()).expect("failed to respond!");
                 }
