@@ -1,17 +1,16 @@
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
+use std::thread::spawn;
 
-use crate::api_versions::api_versions_response;
-use crate::headers::RequestHeader;
-use crate::parse_utils::read_u32;
 use crate::response::respond_to_request;
 use crate::wire_parser::{parse_boolean, parse_key, parse_list, parse_request_header, parse_size, parse_string};
 
 mod api_versions;
-mod parse_utils;
+mod join_group_request;
 mod headers;
 mod response;
 mod wire_parser;
+mod serialization_utils;
 
 fn process_stream(mut stream: TcpStream) {
     let peer = stream.peer_addr().expect("failed to get peer address");
@@ -43,7 +42,7 @@ fn process_stream(mut stream: TcpStream) {
                         eprintln!("FindCoordinator request for {} [{}]", key, key_type);
                     }
 
-                    let response = respond_to_request(header);
+                    let response = respond_to_request(header, data);
                     stream.write(response.as_slice()).expect("failed to respond!");
                 }
             }
@@ -60,7 +59,11 @@ fn main() {
 
     for stream in listener.incoming() {
         match stream {
-            Ok(stream) => process_stream(stream),
+            Ok(stream) => {
+                spawn(move || {
+                    process_stream(stream);
+                });
+            }
             Err(err) => eprintln!("err = {:?}", err),
         }
     }

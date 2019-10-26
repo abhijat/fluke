@@ -7,6 +7,7 @@ fn serialized_api_versions() -> Vec<u8> {
     api_versions.insert(0_u16, (0_u16, 7_u16));
     api_versions.insert(3_u16, (0_u16, 8_u16));
     api_versions.insert(10_u16, (0_u16, 2_u16));
+    api_versions.insert(11_u16, (0_u16, 5_u16));
 
     let mut data = Vec::<u8>::new();
     data.extend_from_slice(&(api_versions.len() as u32).to_be_bytes());

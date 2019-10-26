@@ -1,5 +1,3 @@
-use crate::parse_utils::{read_u16, read_u32};
-
 #[derive(Debug)]
 pub struct RequestHeader {
     pub api_key: u16,
